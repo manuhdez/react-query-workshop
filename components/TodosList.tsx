@@ -1,20 +1,32 @@
+import { useState, useEffect } from 'react';
+import { getTodos } from '../api/todos';
 import { TodoRecord } from '../types/todo';
 
-interface TodosListProps {
-  todos: TodoRecord[];
-}
+export default function TodosList() {
+  const [todos, setTodos] = useState<TodoRecord[]>([]);
 
-export default function TodosList({ todos }: TodosListProps) {
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    const data = await getTodos();
+    setTodos(data);
+  };
+
   if (!todos.length) return null;
 
   return (
-    <ul>
-      {todos.map(({ id, title, done }) => (
-        <li key={id}>
-          <span>{title}</span>
-          <input type="checkbox" checked={done} />
-        </li>
-      ))}
-    </ul>
+    <section>
+      <h1>Todos:</h1>
+      <ul>
+        {todos.map(({ id, title, done }) => (
+          <li key={id}>
+            <span>{title}</span>
+            <input type="checkbox" checked={done} />
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

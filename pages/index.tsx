@@ -1,25 +1,12 @@
-import { useEffect, useState } from 'react';
-import { getTodos } from '../api/todos';
 import TodoForm from '../components/TodoForm';
 import TodosList from '../components/TodosList';
+import HomeLayout from '../styles/HomeLayout';
 
 export default function Home() {
-  const [todos, setTodos] = useState([]);
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    const data = await getTodos();
-    setTodos(data);
-  };
-
   return (
-    <main>
-      <h1>Todos:</h1>
+    <HomeLayout>
       <TodoForm />
-      <TodosList todos={todos} />
-    </main>
+      <TodosList />
+    </HomeLayout>
   );
 }
