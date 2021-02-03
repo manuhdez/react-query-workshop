@@ -1,13 +1,14 @@
 {
   "todos": [
     {
-      "name": "hello world 1"
+      "title": "hello world",
+      "done": false,
+      "id": 1
     },
     {
-      "name": "hello world 2"
-    },
-    {
-      "name": "hello world 3"
+      "title": "hello world 2",
+      "done": false,
+      "id": 2
     }
   ]
 }

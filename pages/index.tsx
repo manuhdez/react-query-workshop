@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getTodos } from '../api/todos';
+import TodoForm from '../components/TodoForm';
+import TodosList from '../components/TodosList';
 
 export default function Home() {
   const [todos, setTodos] = useState([]);
@@ -16,11 +18,8 @@ export default function Home() {
   return (
     <main>
       <h1>Todos:</h1>
-      <ul>
-        {todos.map((todo) => (
-          <li>{todo?.name}</li>
-        ))}
-      </ul>
+      <TodoForm />
+      <TodosList todos={todos} />
     </main>
   );
 }
