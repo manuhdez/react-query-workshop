@@ -11,9 +11,21 @@ export const getTodos = async (): Promise<TodoRecord[]> => {
   return await response.json();
 };
 
-export const postTodo = async (todo: Todo): Promise<Todo> => {
+export const postTodo = async (todo: Todo): Promise<TodoRecord> => {
   const response = await fetch(`${BASE_URL}/todos`, {
     method: 'POST',
+    body: JSON.stringify(todo),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return await response.json();
+};
+
+export const updateTodo = async (todo: TodoRecord): Promise<TodoRecord> => {
+  const response = await fetch(`${BASE_URL}/todos/${todo.id}`, {
+    method: 'PUT',
     body: JSON.stringify(todo),
     headers: {
       'Content-Type': 'application/json',
