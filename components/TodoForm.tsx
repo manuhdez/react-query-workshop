@@ -1,5 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { postTodo } from '../api/todos';
+import { Form, TextInput } from '../styles/Form';
+import { Button } from '../styles/Button';
 
 export default function TodoForm() {
   const [todoTitle, setTodoTitle] = useState<string>('');
@@ -10,6 +12,9 @@ export default function TodoForm() {
 
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault();
+
+    if (!todoTitle) return;
+
     const newTodo = {
       title: todoTitle,
       done: false,
@@ -19,14 +24,17 @@ export default function TodoForm() {
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
-      <label htmlFor="todo-input">Add todo:</label>
-      <input
-        type="text"
-        value={todoTitle}
-        onChange={handleInputChange}
-        placeholder="Add todo tite here"
-      />
-    </form>
+    <Form onSubmit={handleFormSubmit}>
+      <TextInput>
+        <label htmlFor="todo-input">Add todo:</label>
+        <input
+          type="text"
+          value={todoTitle}
+          onChange={handleInputChange}
+          placeholder="Cleaning the desk..."
+        />
+      </TextInput>
+      <Button type="submit">Save</Button>
+    </Form>
   );
 }
