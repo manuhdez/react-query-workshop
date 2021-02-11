@@ -6,16 +6,14 @@ import {
   UpdateTodoResponse,
 } from 'types/api';
 
-export const getTodos = async (): Promise<GetTodosResPonse> => {
+export const getTodos = async (): Promise<TodoRecord[]> => {
   const response = await fetch(`${BASE_URL}/todos`, {
     headers: {
       'Content-Type': 'application',
     },
   });
 
-  const data = await response.json();
-
-  return { data, status: response.status };
+  return await response.json();
 };
 
 export const postTodo = async (todo: Todo): Promise<PostTodoResponse> => {

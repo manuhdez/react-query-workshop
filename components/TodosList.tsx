@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { getTodos } from 'api/todos';
 import { TodoRecord } from 'types/todo';
 import TodoItem from 'components/TodoItem';
+import { useQuery } from 'react-query';
 
 const ListContainer = styled.section`
   padding: 1rem;
@@ -22,38 +23,22 @@ const List = styled.ul`
 `;
 
 export default function TodosList() {
-  const [todos, setTodos] = useState<TodoRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const { isLoading, isError, data: todos } = useQuery<TodoRecord[]>(
+    'getTodos',
+    getTodos
+  );
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  if (!todos?.length) return null;
 
-  const fetchPosts = async () => {
-    try {
-      setIsLoading(true);
-      const { data, status } = await getTodos();
-      if (status === 200) {
-        setTodos(data);
-      } else {
-        throw new Error();
-      }
-    } catch (err) {
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  if (isLoading) return <ListContainer>Loading todos...</ListContainer>;
 
-  if (!todos.length) return null;
+  if (isError)
+    return <ListContainer>There was an error loading todos.</ListContainer>;
 
   return (
     <ListContainer>
       <h1>Todos:</h1>
-      <p hidden={!isLoading || hasError}>Loading todos...</p>
-      <p hidden={!hasError || isLoading}>There was an error loading todos.</p>
-      <List hidden={isLoading || hasError}>
+      <List>
         {todos.map((todo) => (
           <TodoItem item={todo} key={todo.id} />
         ))}
