@@ -9,4 +9,9 @@ export const Button = styled.button`
   color: var(--dark);
   background: ${({ theme = 'primary' }) =>
     theme === 'primary' ? 'var(--green)' : 'var(--red)'};
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;

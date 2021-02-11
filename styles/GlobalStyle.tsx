@@ -12,6 +12,20 @@ export default createGlobalStyle`
     --shadow-light: 0 5px 20px 0px rgba(0, 0, 0, 0.2);
     --corner-radius: 5px;
     --rounded: 50%;
+
+    @keyframes fade-in-out {
+      0% {
+        opacity: 0.8;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 0.8;
+      }
+    }
   }
 
   html,

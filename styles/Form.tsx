@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Form = styled.form`
   display: flex;
@@ -10,7 +10,11 @@ export const Form = styled.form`
   box-shadow: var(--shadow-light);
 `;
 
-export const TextInput = styled.div`
+interface TextInputProps {
+  hasError: boolean;
+}
+
+export const TextInput = styled.div<TextInputProps>`
   display: flex;
   flex-direction: column;
   margin-bottom: 0.5rem;
@@ -28,6 +32,13 @@ export const TextInput = styled.div`
     background: var(--grey);
     border: none;
     border-radius: var(--corner-radius);
-    outline-color: var(--purple);
+    outline-color: var(--red);
+
+    ${({ hasError }) =>
+      hasError &&
+      css`
+        outline-color: var(--red);
+        box-shadow: 0 0 0 2px var(--red);
+      `}
   }
 `;

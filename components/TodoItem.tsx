@@ -1,9 +1,9 @@
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
-import { updateTodo } from '../api/todos';
-import { Button } from '../styles/Button';
-import Checkbox from '../styles/Checkbox';
-import { TodoRecord } from '../types/todo';
+import { updateTodo } from 'api/todos';
+import { Button } from 'styles/Button';
+import Checkbox from 'styles/Checkbox';
+import { TodoRecord } from 'types/todo';
 
 interface ItemProps {
   done: boolean;
