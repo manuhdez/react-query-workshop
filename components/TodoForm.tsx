@@ -1,50 +1,49 @@
+import React from 'react';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { postTodo } from 'api/todos';
 import { Form, TextInput } from 'styles/Form';
 import { Button } from 'styles/Button';
+import { useMutation, useQueryClient } from 'react-query';
+import { Todo, TodoRecord } from 'types/todo';
 
 export default function TodoForm() {
   const [todoTitle, setTodoTitle] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hasError, setHasError] = useState<boolean>(false);
 
+  const queryClient = useQueryClient();
+
+  const handleMutationSuccess = () => {
+    queryClient.fetchQuery('getTodos');
+    setTodoTitle('');
+  };
+
+  const mutation = useMutation<TodoRecord, unknown, Todo>(postTodo as never, {
+    onSuccess: handleMutationSuccess,
+  });
+
+  const { mutate, isLoading, isError, reset } = mutation;
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     setTodoTitle(target.value);
   };
 
   const handleInputFocus = () => {
-    setHasError(false);
+    reset();
   };
 
   const handleFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!todoTitle) return;
 
-    setHasError(false);
-    setIsLoading(true);
-
-    const newTodo = {
+    const newTodo: Todo = {
       title: todoTitle,
       done: false,
     };
 
-    try {
-      const response = await postTodo(newTodo);
-      if (response.status === 201) {
-        setTodoTitle('');
-      } else {
-        throw new Error();
-      }
-    } catch (err) {
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
-    }
+    mutate(newTodo);
   };
 
   return (
     <Form onSubmit={handleFormSubmit}>
-      <TextInput hasError={hasError}>
+      <TextInput hasError={isError}>
         <label htmlFor="todo-input">Add todo:</label>
         <input
           type="text"

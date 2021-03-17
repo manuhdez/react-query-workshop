@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { getTodos } from 'api/todos';
 import { TodoRecord } from 'types/todo';
@@ -28,19 +28,19 @@ export default function TodosList() {
     getTodos
   );
 
-  if (!todos?.length) return null;
-
   if (isLoading) return <ListContainer>Loading todos...</ListContainer>;
 
   if (isError)
     return <ListContainer>There was an error loading todos.</ListContainer>;
+
+  if (!todos?.length) return null;
 
   return (
     <ListContainer>
       <h1>Todos:</h1>
       <List>
         {todos.map((todo) => (
-          <TodoItem item={todo} key={todo.id} />
+          <TodoItem key={todo.id} todo={todo} />
         ))}
       </List>
     </ListContainer>

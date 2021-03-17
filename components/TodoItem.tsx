@@ -18,6 +18,10 @@ const Item = styled.li<ItemProps>`
   box-shadow: var(--shadow-light);
   transition: transform 200ms ease-out;
 
+  ${Checkbox} {
+    margin-right: 1.5rem;
+  }
+
   span {
     position: relative;
     line-height: 1rem;
@@ -44,50 +48,57 @@ const Item = styled.li<ItemProps>`
 `;
 
 interface TodoItemProps {
-  item: TodoRecord;
+  todo: TodoRecord;
 }
 
-export default function TodoItem({ item }: TodoItemProps) {
-  const [isEditable, setIsEditable] = useState(false);
-  const [todoData, setTodoData] = useState(item);
+export default function TodoItem({ todo }: TodoItemProps) {
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [todoTitle, setTodoTitle] = useState<string>(todo.title);
+  const [isDone, setIsDone] = useState<boolean>(todo.done);
+
+  const setDefaultData = () => {
+    setTodoTitle(todo.title);
+    setIsDone(todo.done);
+  };
 
   const handleButtonClick = () => {
-    if (isEditable) {
-      handleSaveTodoChanges();
+    if (isEditing) {
+      saveTodoChanges();
     }
-
-    setIsEditable((current) => !current);
+    setIsEditing((current) => !current);
   };
 
   const handleChangeTitle = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setTodoData((todo) => ({ ...todo, title: target.value }));
+    setTodoTitle(target.value);
   };
 
   const handleChangeDone = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setTodoData((todo) => ({ ...todo, done: target.checked }));
-    handleSaveTodoChanges();
+    setIsDone(target.checked);
+    saveTodoChanges();
   };
 
-  const handleSaveTodoChanges = async () => {
+  const saveTodoChanges = async () => {
     try {
-      await updateTodo(todoData);
+      await updateTodo({
+        ...todo,
+        title: todoTitle,
+        done: isDone,
+      });
     } catch (e) {
-      setTodoData(item);
+      setDefaultData();
     }
   };
 
-  const { title, done } = todoData;
-
   return (
-    <Item done={done}>
-      {isEditable ? (
-        <input type="text" value={title} onChange={handleChangeTitle} />
+    <Item done={isDone}>
+      <Checkbox checked={isDone} onChange={handleChangeDone} />
+      {isEditing ? (
+        <input type="text" value={todoTitle} onChange={handleChangeTitle} />
       ) : (
-        <span>{title}</span>
+        <span>{todoTitle}</span>
       )}
-      <Checkbox checked={done} onChange={handleChangeDone} />
       <Button theme="secondary" onClick={handleButtonClick}>
-        {isEditable ? 'Save' : 'Edit'}
+        {isEditing ? 'Save' : 'Edit'}
       </Button>
     </Item>
   );
