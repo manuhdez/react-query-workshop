@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "serve": "json-server --watch db.json --port 5000",
-    "run:dev": "concurrently \"yarn serve\" \"yarn dev\""
+    "run:dev": "concurrently \"yarn serve\" \"yarn dev\"",
+    "test": "jest --watchAll"
   },
   "dependencies": {
     "next": "10.0.6",
@@ -17,11 +18,21 @@
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^12.7.3",
+    "@types/jest": "^26.0.20",
     "@types/node": "^14.14.22",
     "@types/react": "^17.0.0",
     "@types/styled-components": "^5.1.7",
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "babel-jest": "^26.6.3",
     "babel-plugin-styled-components": "^1.12.0",
     "concurrently": "^5.3.0",
+    "eslint": "^7.19.0",
+    "eslint-plugin-react": "^7.22.0",
+    "jest": "^26.6.3",
     "typescript": "^4.1.3"
   }
 }
