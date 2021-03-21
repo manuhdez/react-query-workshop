@@ -1,51 +1,9 @@
 import { ChangeEvent, useState } from 'react';
-import styled from 'styled-components';
 import { updateTodo } from 'api/todos';
 import { Button } from 'styles/Button';
 import Checkbox from 'styles/Checkbox';
 import { TodoRecord } from 'types/todo';
-
-interface ItemProps {
-  done: boolean;
-}
-
-const Item = styled.li<ItemProps>`
-  display: flex;
-  align-items: center;
-  padding: 0.6rem 1rem;
-  margin-bottom: 1rem;
-  border-radius: var(--corner-radius);
-  box-shadow: var(--shadow-light);
-  transition: transform 200ms ease-out;
-
-  ${Checkbox} {
-    margin-right: 1.5rem;
-  }
-
-  span {
-    position: relative;
-    line-height: 1rem;
-
-    &::before {
-      position: absolute;
-      content: '';
-      height: 2px;
-      top: 50%;
-      background: var(--dark);
-      transform: translate(-0.5rem, -50%);
-      transition: width 200ms ease-out;
-      width: ${({ done }) => (done ? 'calc(100% + 1rem)' : '0')};
-    }
-  }
-
-  button {
-    margin-left: auto;
-  }
-
-  &:hover {
-    transform: translateY(-3px) scale(1.025);
-  }
-`;
+import { Item } from './TodoItem.styles';
 
 interface TodoItemProps {
   todo: TodoRecord;
@@ -61,10 +19,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
     setIsDone(todo.done);
   };
 
-  const handleButtonClick = () => {
-    if (isEditing) {
-      saveTodoChanges();
-    }
+  const handleToggleEdit = () => {
     setIsEditing((current) => !current);
   };
 
@@ -74,18 +29,23 @@ export default function TodoItem({ todo }: TodoItemProps) {
 
   const handleChangeDone = ({ target }: ChangeEvent<HTMLInputElement>) => {
     setIsDone(target.checked);
-    saveTodoChanges();
+    handleSaveUpdatedTodo({ ...todo, done: target.checked });
   };
 
-  const saveTodoChanges = async () => {
+  const handleSaveButton = async () => {
+    handleSaveUpdatedTodo();
+  };
+
+  const handleSaveUpdatedTodo = async (updatedTodo: TodoRecord = null) => {
+    const data = updatedTodo || { ...todo, title: todoTitle, done: isDone };
     try {
-      await updateTodo({
-        ...todo,
-        title: todoTitle,
-        done: isDone,
-      });
+      await updateTodo(data);
     } catch (e) {
       setDefaultData();
+    } finally {
+      if (isEditing) {
+        handleToggleEdit();
+      }
     }
   };
 
@@ -95,9 +55,12 @@ export default function TodoItem({ todo }: TodoItemProps) {
       {isEditing ? (
         <input type="text" value={todoTitle} onChange={handleChangeTitle} />
       ) : (
-        <span>{todoTitle}</span>
+        <p onClick={handleToggleEdit}>{todoTitle}</p>
       )}
-      <Button theme="secondary" onClick={handleButtonClick}>
+      <Button
+        theme="secondary"
+        onClick={isEditing ? handleSaveButton : handleToggleEdit}
+      >
         {isEditing ? 'Save' : 'Edit'}
       </Button>
     </Item>
