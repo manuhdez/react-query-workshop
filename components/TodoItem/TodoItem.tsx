@@ -1,5 +1,5 @@
-import { ChangeEvent, useState } from 'react';
-import { updateTodo } from 'api/todos';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useUpdateTodo, useDeleteTodo } from 'hooks/useTodosCRUD';
 import { Button } from 'styles/Button';
 import Checkbox from 'styles/Checkbox';
 import { TodoRecord } from 'types/todo';
@@ -14,6 +14,17 @@ export default function TodoItem({ todo }: TodoItemProps) {
   const [todoTitle, setTodoTitle] = useState<string>(todo.title);
   const [isDone, setIsDone] = useState<boolean>(todo.done);
 
+  const updateTodo = useUpdateTodo();
+  const deleteTodo = useDeleteTodo();
+
+  const inputElement = useRef<HTMLInputElement>();
+
+  useEffect(() => {
+    if (isEditing) {
+      inputElement.current.focus();
+    }
+  }, [isEditing, inputElement]);
+
   const setDefaultData = () => {
     setTodoTitle(todo.title);
     setIsDone(todo.done);
@@ -21,6 +32,11 @@ export default function TodoItem({ todo }: TodoItemProps) {
 
   const handleToggleEdit = () => {
     setIsEditing((current) => !current);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing((current) => !current);
+    setTodoTitle(todo.title);
   };
 
   const handleChangeTitle = ({ target }: ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +55,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
   const handleSaveUpdatedTodo = async (updatedTodo: TodoRecord = null) => {
     const data = updatedTodo || { ...todo, title: todoTitle, done: isDone };
     try {
-      await updateTodo(data);
+      await updateTodo.update(data);
     } catch (e) {
       setDefaultData();
     } finally {
@@ -49,20 +65,45 @@ export default function TodoItem({ todo }: TodoItemProps) {
     }
   };
 
+  const handleDeleteTodo = () => {
+    deleteTodo.delete(todo.id);
+  };
+
+  const deleteButton = (
+    <Button theme="secondary" onClick={handleDeleteTodo}>
+      Delete
+    </Button>
+  );
+
+  const activeTodoButtons = isEditing ? (
+    <>
+      <Button theme="secondary" onClick={handleCancelEdit}>
+        Cancel
+      </Button>
+      <Button theme="secondary" onClick={handleSaveButton}>
+        Save
+      </Button>
+    </>
+  ) : (
+    <Button theme="secondary" onClick={handleToggleEdit}>
+      Edit
+    </Button>
+  );
+
   return (
     <Item done={isDone}>
       <Checkbox checked={isDone} onChange={handleChangeDone} />
       {isEditing ? (
-        <input type="text" value={todoTitle} onChange={handleChangeTitle} />
+        <input
+          type="text"
+          ref={inputElement}
+          value={todoTitle}
+          onChange={handleChangeTitle}
+        />
       ) : (
         <p onClick={handleToggleEdit}>{todoTitle}</p>
       )}
-      <Button
-        theme="secondary"
-        onClick={isEditing ? handleSaveButton : handleToggleEdit}
-      >
-        {isEditing ? 'Save' : 'Edit'}
-      </Button>
+      {isDone ? deleteButton : activeTodoButtons}
     </Item>
   );
 }

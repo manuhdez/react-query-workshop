@@ -1,6 +1,5 @@
 import { BASE_URL } from './index';
 import { Todo, TodoRecord } from 'types/todo';
-import { UpdateTodoResponse } from 'types/api';
 
 export const getTodos = async (): Promise<TodoRecord[]> => {
   const response = await fetch(`${BASE_URL}/todos`, {
@@ -22,18 +21,23 @@ export const postTodo = (todo: Todo) => {
   });
 };
 
-export const updateTodo = async (
-  todo: TodoRecord
-): Promise<UpdateTodoResponse> => {
-  const response = await fetch(`${BASE_URL}/todos/${todo.id}`, {
+export const updateTodo = async (todo: TodoRecord) => {
+  console.log({ todo });
+  return await fetch(`${BASE_URL}/todos/${todo.id}`, {
     method: 'PUT',
     body: JSON.stringify(todo),
     headers: {
       'Content-Type': 'application/json',
     },
   });
+};
 
-  const data = await response.json();
-
-  return { data, status: response.status };
+export const deleteTodo = async (id: number) => {
+  console.log({ id });
+  return await fetch(`${BASE_URL}/todos/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 };

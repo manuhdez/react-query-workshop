@@ -1,22 +1,23 @@
 import { render, screen } from '@testing-library/react';
-import * as hook from 'hooks/useFetchTodos';
+import { useGetTodos } from 'hooks/useTodosCRUD';
 import { mockTodos } from 'mocks/todos';
 import TodosList from './TodosList';
 
 jest.mock('react-query', () => ({
   useQuery: jest.fn(),
+  useMutation: jest.fn(),
 }));
 
-const mockUseGetTodos = jest.spyOn(hook, 'useGetTodos');
+jest.mock('hooks/useTodosCRUD');
 
 describe('<TodosList />', () => {
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   describe('while loading todos', () => {
     beforeEach(() => {
-      mockUseGetTodos.mockReturnValue({
+      (useGetTodos as jest.Mock).mockReturnValue({
         isLoading: true,
         isError: false,
         data: [],
@@ -26,7 +27,7 @@ describe('<TodosList />', () => {
     });
 
     test('user can see a loading message while fetching todos', () => {
-      expect(mockUseGetTodos).toHaveBeenCalledTimes(1);
+      expect(useGetTodos as jest.Mock).toHaveBeenCalledTimes(1);
       const loadingMessage = screen.getByText(/Loading/);
       expect(loadingMessage).toBeInTheDocument();
     });
@@ -34,7 +35,7 @@ describe('<TodosList />', () => {
 
   describe('with an error loading todos', () => {
     beforeEach(() => {
-      mockUseGetTodos.mockReturnValue({
+      (useGetTodos as jest.Mock).mockReturnValue({
         isLoading: false,
         isError: true,
         data: [],
@@ -44,7 +45,7 @@ describe('<TodosList />', () => {
     });
 
     test('user can see a message if there is an error fetching todos', () => {
-      expect(mockUseGetTodos).toHaveBeenCalledTimes(1);
+      expect(useGetTodos as jest.Mock).toHaveBeenCalledTimes(1);
       const errorMessage = screen.getByText(/error/);
       expect(errorMessage).toBeInTheDocument();
     });
@@ -52,7 +53,7 @@ describe('<TodosList />', () => {
 
   describe('with an empty list of todos', () => {
     beforeEach(() => {
-      mockUseGetTodos.mockReturnValue({
+      (useGetTodos as jest.Mock).mockReturnValue({
         isLoading: false,
         isError: false,
         data: [],
@@ -62,7 +63,7 @@ describe('<TodosList />', () => {
     });
 
     test('user can see a message if the list of todos is empty', () => {
-      expect(mockUseGetTodos).toHaveBeenCalledTimes(1);
+      expect(useGetTodos as jest.Mock).toHaveBeenCalledTimes(1);
       const emptyMessage = screen.getByText('No todos yet');
       expect(emptyMessage).toBeInTheDocument();
     });
@@ -70,7 +71,7 @@ describe('<TodosList />', () => {
 
   describe('with a list of todos loaded', () => {
     beforeEach(() => {
-      mockUseGetTodos.mockReturnValue({
+      (useGetTodos as jest.Mock).mockReturnValue({
         isLoading: false,
         isError: false,
         data: mockTodos,
@@ -80,7 +81,7 @@ describe('<TodosList />', () => {
     });
 
     test('user can see a list of todos', () => {
-      expect(mockUseGetTodos).toHaveBeenCalledTimes(1);
+      expect(useGetTodos as jest.Mock).toHaveBeenCalledTimes(1);
 
       const title = screen.getByRole('heading', { level: 1, name: 'Todos' });
       expect(title).toBeInTheDocument();

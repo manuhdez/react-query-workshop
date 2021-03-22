@@ -1,24 +1,41 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as todos from 'api/todos';
+import { useUpdateTodo, useDeleteTodo } from 'hooks/useTodosCRUD';
 import TodoItem from './TodoItem';
 
-const mockUpdateTodo = jest.spyOn(todos, 'updateTodo');
+jest.mock('react-query', () => ({
+  useQuery: jest.fn(),
+  useMutation: jest.fn(),
+}));
+
+jest.mock('hooks/useTodosCRUD');
 
 describe('<TodoItem />', () => {
   const mockItem = { id: 208, title: 'mock todo item', done: false };
+  const mockUpdate = jest.fn();
+  const mockDelete = jest.fn();
 
   beforeEach(() => {
-    render(<TodoItem todo={mockItem} />);
-
-    mockUpdateTodo.mockResolvedValue({
-      status: 200,
-      data: mockItem,
+    (useUpdateTodo as jest.Mock).mockReturnValue({
+      isLoading: false,
+      isError: false,
+      data: null,
+      update: mockUpdate,
     });
+
+    (useDeleteTodo as jest.Mock).mockReturnValue({
+      isLoading: false,
+      isError: false,
+      data: null,
+      delete: mockDelete,
+    });
+
+    render(<TodoItem todo={mockItem} />);
   });
 
   afterEach(() => {
-    mockUpdateTodo.mockClear();
+    mockUpdate.mockClear();
+    mockDelete.mockClear();
   });
 
   function editTodoInputValue(input: HTMLElement, newTitle = 'updated title') {
@@ -26,30 +43,55 @@ describe('<TodoItem />', () => {
     userEvent.type(input, newTitle);
   }
 
-  function getEditButton(): HTMLElement {
-    const editButton = screen.getByRole('button', { name: 'Edit' });
-    return editButton;
+  function getTodoTitle() {
+    return screen.getByText(mockItem.title);
   }
 
-  test('display item title', () => {
-    const title = screen.getByText(mockItem.title);
+  function getTitleInput() {
+    return screen.getByRole('textbox');
+  }
+  function getCheckbox() {
+    return screen.getByRole('checkbox');
+  }
+
+  function getButton(text: string) {
+    return screen.queryByRole('button', { name: text });
+  }
+
+  test('user can see the todo title, a checkbox field and an Edit button', () => {
+    const title = getTodoTitle();
+    const checkbox = getCheckbox();
+    const editButton = getButton('Edit');
     expect(title).toBeInTheDocument();
+    expect(checkbox).toBeInTheDocument();
+    expect(editButton).toBeInTheDocument();
   });
 
-  test('user can use the checkbox to update the "done" property of the todo', () => {
-    const checkbox = screen.getByRole('checkbox');
-    expect(checkbox).not.toBeChecked();
+  test('A todo that is being edited shows "Save" and "Cancel" buttons', () => {
+    let editButton = null;
+    let saveButton = null;
+    let cancelButton = null;
 
-    userEvent.click(checkbox);
-    expect(checkbox).toBeChecked();
-    expect(mockUpdateTodo).toHaveBeenCalledTimes(1);
-    expect(mockUpdateTodo).toHaveBeenCalledWith({ ...mockItem, done: true });
-  });
+    editButton = getButton('Edit');
+    saveButton = getButton('Save');
+    cancelButton = getButton('Cancel');
+    expect(editButton).toBeInTheDocument();
+    expect(saveButton).not.toBeInTheDocument();
+    expect(cancelButton).not.toBeInTheDocument();
 
-  test('user can edit and save the new title of the todo', async () => {
-    const editButton = getEditButton();
     userEvent.click(editButton);
-    expect(editButton).toHaveTextContent('Save');
+
+    editButton = getButton('Edit');
+    saveButton = getButton('Save');
+    cancelButton = getButton('Cancel');
+    expect(editButton).not.toBeInTheDocument();
+    expect(saveButton).toBeInTheDocument();
+    expect(cancelButton).toBeInTheDocument();
+  });
+
+  test('user can click the edit button and update the todo title', async () => {
+    const editButton = getButton('Edit');
+    userEvent.click(editButton);
 
     const titleInput = screen.getByRole('textbox');
     expect(titleInput).toHaveValue(mockItem.title);
@@ -58,12 +100,63 @@ describe('<TodoItem />', () => {
     editTodoInputValue(titleInput, newTitle);
     expect(titleInput).toHaveValue(newTitle);
 
-    userEvent.click(editButton);
+    userEvent.click(getButton('Save'));
     await waitFor(() => expect(editButton).toHaveTextContent('Edit'));
-    expect(mockUpdateTodo).toHaveBeenCalledTimes(1);
-    expect(mockUpdateTodo).toHaveBeenCalledWith({
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledWith({
       ...mockItem,
       title: newTitle,
     });
+  });
+
+  test('a user can discard the changes made to the title by clicking the cancel button', () => {
+    const editButton = getButton('Edit');
+    const todoTitle = screen.getByText(mockItem.title);
+    expect(todoTitle).toBeInTheDocument();
+
+    userEvent.click(editButton);
+
+    const titleInput = getTitleInput();
+    expect(titleInput).toHaveValue(mockItem.title);
+    editTodoInputValue(titleInput, 'new todo title');
+    expect(titleInput).toHaveValue('new todo title');
+
+    const cancelButton = getButton('Cancel');
+    expect(cancelButton).toBeInTheDocument();
+
+    userEvent.click(cancelButton);
+    const updatedTitle = screen.queryByTitle('new todo title');
+    expect(updatedTitle).not.toBeInTheDocument();
+    const restartedTitle = screen.getByText(mockItem.title);
+    expect(restartedTitle).toBeInTheDocument();
+  });
+
+  test('user can toggle the todo as done by clicking the checkbox', () => {
+    const checkbox = screen.getByRole('checkbox');
+    expect(checkbox).not.toBeChecked();
+
+    userEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledWith({ ...mockItem, done: true });
+  });
+
+  test('A "done" task shows a button to delete it', () => {
+    const checkbox = getCheckbox();
+    expect(checkbox).not.toBeChecked();
+    expect(getButton('Delete')).not.toBeInTheDocument();
+
+    userEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(getButton('Delete')).toBeInTheDocument();
+  });
+
+  test('user can delete a "done" task', () => {
+    const checkbox = getCheckbox();
+    userEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+
+    const deleteButton = getButton('Delete');
+    expect(deleteButton).toBeInTheDocument();
   });
 });
