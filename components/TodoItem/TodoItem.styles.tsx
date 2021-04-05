@@ -19,14 +19,27 @@ export const Item = styled.li<ItemProps>`
   }
 
   p {
-    position: relative;
-    margin: 0;
-    line-height: 1rem;
     text-decoration: ${({ done }) => (done ? 'line-through' : 'none')};
+  }
+
+  input[type='text'] {
+    width: 70%;
+    appearance: none;
+    border: none;
+    outline: none;
+    color: rgba(0, 0, 0, 0.5);
   }
 
   p,
   input[type='text'] {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    line-height: 1.1rem;
+    letter-spacing: 1;
+    height: 1.3rem;
+    padding: 0;
+    margin: 0;
     margin-right: auto;
   }
 
