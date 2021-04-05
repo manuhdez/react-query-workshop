@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useUpdateTodo, useDeleteTodo } from 'hooks/useTodosCRUD';
+import useUpdateTodo from 'hooks/todos/useUpdateTodo';
+import useDeleteTodo from 'hooks/todos/useDeleteTodo';
 import { Button } from 'styles/Button';
 import Checkbox from 'styles/Checkbox';
 import { TodoRecord } from 'types/todo';
@@ -55,7 +56,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
   const handleSaveUpdatedTodo = async (updatedTodo: TodoRecord = null) => {
     const data = updatedTodo || { ...todo, title: todoTitle, done: isDone };
     try {
-      await updateTodo.update(data);
+      await updateTodo.updateTodo(data);
     } catch (e) {
       setDefaultData();
     } finally {
@@ -66,7 +67,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
   };
 
   const handleDeleteTodo = () => {
-    deleteTodo.delete(todo.id);
+    deleteTodo.deleteTodo(todo.id);
   };
 
   const deleteButton = (
@@ -80,12 +81,12 @@ export default function TodoItem({ todo }: TodoItemProps) {
       <Button theme="secondary" onClick={handleCancelEdit}>
         Cancel
       </Button>
-      <Button theme="secondary" onClick={handleSaveButton}>
+      <Button theme="primary" onClick={handleSaveButton}>
         Save
       </Button>
     </>
   ) : (
-    <Button theme="secondary" onClick={handleToggleEdit}>
+    <Button theme="primary" onClick={handleToggleEdit}>
       Edit
     </Button>
   );

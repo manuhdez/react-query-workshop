@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetTodos } from 'hooks/useTodosCRUD';
+import useGetTodos from 'hooks/todos/useGetTodos';
 import TodoItem from 'components/TodoItem/TodoItem';
 import { List, ListContainer } from './TodosList.styles';
 

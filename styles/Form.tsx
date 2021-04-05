@@ -32,7 +32,8 @@ export const TextInput = styled.div<TextInputProps>`
     background: var(--grey);
     border: none;
     border-radius: var(--corner-radius);
-    outline-color: var(--red);
+    outline-color: ${(props) =>
+      props.hasError ? 'var(--red)' : 'var(--green)'};
 
     ${({ hasError }) =>
       hasError &&

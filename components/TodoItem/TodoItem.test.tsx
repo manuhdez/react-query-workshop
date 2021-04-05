@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useUpdateTodo, useDeleteTodo } from 'hooks/useTodosCRUD';
+import useUpdateTodo from 'hooks/todos/useUpdateTodo';
+import useDeleteTodo from 'hooks/todos/useDeleteTodo';
 import TodoItem from './TodoItem';
 
 jest.mock('react-query', () => ({
@@ -8,7 +9,8 @@ jest.mock('react-query', () => ({
   useMutation: jest.fn(),
 }));
 
-jest.mock('hooks/useTodosCRUD');
+jest.mock('hooks/todos/useUpdateTodo');
+jest.mock('hooks/todos/useDeleteTodo');
 
 describe('<TodoItem />', () => {
   const mockItem = { id: 208, title: 'mock todo item', done: false };
@@ -20,14 +22,14 @@ describe('<TodoItem />', () => {
       isLoading: false,
       isError: false,
       data: null,
-      update: mockUpdate,
+      updateTodo: mockUpdate,
     });
 
     (useDeleteTodo as jest.Mock).mockReturnValue({
       isLoading: false,
       isError: false,
       data: null,
-      delete: mockDelete,
+      deleteTodo: mockDelete,
     });
 
     render(<TodoItem todo={mockItem} />);

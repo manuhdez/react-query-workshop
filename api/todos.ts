@@ -11,33 +11,34 @@ export const getTodos = async (): Promise<TodoRecord[]> => {
   return await response.json();
 };
 
-export const postTodo = (todo: Todo) => {
-  return fetch(`${BASE_URL}/todos`, {
+export const postTodo = async (todo: Todo): Promise<TodoRecord> => {
+  const response = await fetch(`${BASE_URL}/todos`, {
     method: 'POST',
     body: JSON.stringify(todo),
     headers: {
       'Content-Type': 'application/json',
     },
   });
+  return await response.json();
 };
 
-export const updateTodo = async (todo: TodoRecord) => {
-  console.log({ todo });
-  return await fetch(`${BASE_URL}/todos/${todo.id}`, {
+export const updateTodo = async (todo: TodoRecord): Promise<TodoRecord> => {
+  const response = await fetch(`${BASE_URL}/todos/${todo.id}`, {
     method: 'PUT',
     body: JSON.stringify(todo),
     headers: {
       'Content-Type': 'application/json',
     },
   });
+  return await response.json();
 };
 
-export const deleteTodo = async (id: number) => {
-  console.log({ id });
-  return await fetch(`${BASE_URL}/todos/${id}`, {
+export const deleteTodo = async (id: number): Promise<TodoRecord> => {
+  const response = await fetch(`${BASE_URL}/todos/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
   });
+  return await response.json();
 };

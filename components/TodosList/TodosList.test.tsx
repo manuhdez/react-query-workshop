@@ -1,14 +1,17 @@
 import { render, screen } from '@testing-library/react';
-import { useGetTodos } from 'hooks/useTodosCRUD';
+import useGetTodos from 'hooks/todos/useGetTodos';
 import { mockTodos } from 'mocks/todos';
 import TodosList from './TodosList';
 
 jest.mock('react-query', () => ({
   useQuery: jest.fn(),
   useMutation: jest.fn(),
+  useQueryClient: jest.fn(),
 }));
 
-jest.mock('hooks/useTodosCRUD');
+jest.mock('hooks/todos/useGetTodos');
+jest.mock('hooks/todos/useUpdateTodo');
+jest.mock('hooks/todos/useDeleteTodo');
 
 describe('<TodosList />', () => {
   afterEach(() => {

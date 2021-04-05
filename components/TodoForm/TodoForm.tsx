@@ -1,44 +1,25 @@
-import React from 'react';
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { postTodo } from 'api/todos';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { Form, TextInput } from 'styles/Form';
 import { Button } from 'styles/Button';
-import { useMutation, useQueryClient } from 'react-query';
-import { Todo, TodoRecord } from 'types/todo';
+import usePostTodo from 'hooks/todos/usePostTodo';
+import { Todo } from 'types/todo';
 
 export default function TodoForm() {
   const [todoTitle, setTodoTitle] = useState<string>('');
 
-  const queryClient = useQueryClient();
+  const { isLoading, isError, postTodo } = usePostTodo();
 
-  const handleMutationSuccess = () => {
-    queryClient.fetchQuery('getTodos');
-    setTodoTitle('');
-  };
+  const getNewTodo = (): Todo => ({ title: todoTitle, done: false });
 
-  const mutation = useMutation<TodoRecord, unknown, Todo>(postTodo as never, {
-    onSuccess: handleMutationSuccess,
-  });
-
-  const { mutate, isLoading, isError, reset } = mutation;
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     setTodoTitle(target.value);
-  };
-
-  const handleInputFocus = () => {
-    reset();
   };
 
   const handleFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!todoTitle) return;
-
-    const newTodo: Todo = {
-      title: todoTitle,
-      done: false,
-    };
-
-    mutate(newTodo);
+    const newTodo = getNewTodo();
+    await postTodo(newTodo, { onSuccess: () => setTodoTitle('') });
   };
 
   return (
@@ -48,12 +29,12 @@ export default function TodoForm() {
         <input
           type="text"
           value={todoTitle}
+          id="todo-input"
           onChange={handleInputChange}
-          onFocus={handleInputFocus}
           placeholder="Cleaning the desk..."
         />
       </TextInput>
-      <Button type="submit" disabled={isLoading || !todoTitle}>
+      <Button type="submit" theme="primary" disabled={isLoading || !todoTitle}>
         {isLoading ? 'Saving...' : 'Save'}
       </Button>
     </Form>
