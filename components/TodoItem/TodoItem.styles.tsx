@@ -25,8 +25,13 @@ export const Item = styled.li<ItemProps>`
     text-decoration: ${({ done }) => (done ? 'line-through' : 'none')};
   }
 
+  p,
+  input[type='text'] {
+    margin-right: auto;
+  }
+
   button {
-    margin-left: auto;
+    margin-left: 1rem;
   }
 
   &:hover {

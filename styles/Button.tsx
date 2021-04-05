@@ -15,3 +15,10 @@ export const Button = styled.button`
     cursor: not-allowed;
   }
 `;
+
+export const RoundedButton = styled(Button)`
+  padding: 0.4rem 0.6rem;
+  font-size: 1.3rem;
+  border-radius: 25%;
+  background: var(--grey);
+`;

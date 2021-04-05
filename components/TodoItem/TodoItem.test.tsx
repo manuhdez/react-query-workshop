@@ -57,7 +57,7 @@ describe('<TodoItem />', () => {
   }
 
   function getButton(text: string) {
-    return screen.queryByRole('button', { name: text });
+    return screen.queryByTitle(text);
   }
 
   test('user can see the todo title, a checkbox field and an Edit button', () => {
@@ -103,7 +103,7 @@ describe('<TodoItem />', () => {
     expect(titleInput).toHaveValue(newTitle);
 
     userEvent.click(getButton('Save'));
-    await waitFor(() => expect(editButton).toHaveTextContent('Edit'));
+    await waitFor(() => expect(editButton).toHaveAttribute('title', 'Edit'));
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenCalledWith({
       ...mockItem,

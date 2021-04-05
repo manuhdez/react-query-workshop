@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import useUpdateTodo from 'hooks/todos/useUpdateTodo';
 import useDeleteTodo from 'hooks/todos/useDeleteTodo';
-import { Button } from 'styles/Button';
+import IconButton from 'components/IconButton/IconButton';
 import Checkbox from 'styles/Checkbox';
 import { TodoRecord } from 'types/todo';
 import { Item } from './TodoItem.styles';
@@ -15,8 +15,8 @@ export default function TodoItem({ todo }: TodoItemProps) {
   const [todoTitle, setTodoTitle] = useState<string>(todo.title);
   const [isDone, setIsDone] = useState<boolean>(todo.done);
 
-  const updateTodo = useUpdateTodo();
-  const deleteTodo = useDeleteTodo();
+  const { updateTodo } = useUpdateTodo();
+  const { deleteTodo } = useDeleteTodo();
 
   const inputElement = useRef<HTMLInputElement>();
 
@@ -56,7 +56,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
   const handleSaveUpdatedTodo = async (updatedTodo: TodoRecord = null) => {
     const data = updatedTodo || { ...todo, title: todoTitle, done: isDone };
     try {
-      await updateTodo.updateTodo(data);
+      await updateTodo(data);
     } catch (e) {
       setDefaultData();
     } finally {
@@ -67,28 +67,20 @@ export default function TodoItem({ todo }: TodoItemProps) {
   };
 
   const handleDeleteTodo = () => {
-    deleteTodo.deleteTodo(todo.id);
+    deleteTodo(todo.id);
   };
 
   const deleteButton = (
-    <Button theme="secondary" onClick={handleDeleteTodo}>
-      Delete
-    </Button>
+    <IconButton icon="🗑" handleClick={handleDeleteTodo} altText="Delete" />
   );
 
   const activeTodoButtons = isEditing ? (
     <>
-      <Button theme="secondary" onClick={handleCancelEdit}>
-        Cancel
-      </Button>
-      <Button theme="primary" onClick={handleSaveButton}>
-        Save
-      </Button>
+      <IconButton icon="❌" handleClick={handleCancelEdit} altText="Cancel" />
+      <IconButton icon="💾" handleClick={handleSaveButton} altText="Save" />
     </>
   ) : (
-    <Button theme="primary" onClick={handleToggleEdit}>
-      Edit
-    </Button>
+    <IconButton icon="✏️" handleClick={handleToggleEdit} altText="Edit" />
   );
 
   return (

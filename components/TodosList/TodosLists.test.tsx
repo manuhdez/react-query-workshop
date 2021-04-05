@@ -10,8 +10,10 @@ jest.mock('react-query', () => ({
 }));
 
 jest.mock('hooks/todos/useGetTodos');
-jest.mock('hooks/todos/useUpdateTodo');
-jest.mock('hooks/todos/useDeleteTodo');
+
+jest.mock('hooks/todos/useUpdateTodo', () => () => ({ updateTodo: jest.fn() }));
+
+jest.mock('hooks/todos/useDeleteTodo', () => () => ({ deleteTodo: jest.fn() }));
 
 describe('<TodosList />', () => {
   afterEach(() => {
