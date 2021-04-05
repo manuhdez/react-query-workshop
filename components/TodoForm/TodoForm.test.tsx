@@ -3,7 +3,6 @@ import userEvent, { specialChars } from '@testing-library/user-event';
 import usePostTodo from 'hooks/todos/usePostTodo';
 import { useState } from 'react';
 import { Todo } from 'types/todo';
-// import { Todo } from 'types/todo';
 import TodoForm from './TodoForm';
 
 jest.mock('react-query', () => ({
@@ -57,7 +56,7 @@ describe('<TodoForm />', () => {
     const todoInput = getFormInput();
     const inputLabel = screen.getByText(/add todo/i);
 
-    expect(inputLabel).toHaveTextContent('Add todo:');
+    expect(inputLabel).toHaveTextContent(/add todo/i);
     expect(todoInput).toHaveProperty('placeholder', 'Cleaning the desk...');
     expect(todoInput).not.toHaveFocus();
 

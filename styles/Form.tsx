@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components';
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  width: 20rem;
+  width: 36rem;
   padding: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   border-radius: 5px;
   box-shadow: var(--shadow-light);
 `;
@@ -27,7 +27,7 @@ export const TextInput = styled.div<TextInputProps>`
   }
 
   input {
-    height: 2rem;
+    height: 2.5rem;
     padding: 0.5rem 1rem;
     background: var(--grey);
     border: none;

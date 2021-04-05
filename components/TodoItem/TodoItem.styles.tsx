@@ -22,17 +22,7 @@ export const Item = styled.li<ItemProps>`
     position: relative;
     margin: 0;
     line-height: 1rem;
-
-    &::before {
-      position: absolute;
-      content: '';
-      height: 2px;
-      top: 50%;
-      background: var(--dark);
-      transform: translate(-0.5rem, -50%);
-      transition: width 200ms ease-out;
-      width: ${({ done }) => (done ? 'calc(100% + 1rem)' : '0')};
-    }
+    text-decoration: ${({ done }) => (done ? 'line-through' : 'none')};
   }
 
   button {

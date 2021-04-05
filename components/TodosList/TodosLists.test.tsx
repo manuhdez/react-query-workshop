@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import useGetTodos from 'hooks/todos/useGetTodos';
 import { mockTodos } from 'mocks/todos';
-import TodosList from './TodosList';
+import TodosLists from './TodosLists';
 
 jest.mock('react-query', () => ({
   useQuery: jest.fn(),
@@ -26,12 +26,12 @@ describe('<TodosList />', () => {
         data: [],
       });
 
-      render(<TodosList />);
+      render(<TodosLists />);
     });
 
     test('user can see a loading message while fetching todos', () => {
       expect(useGetTodos as jest.Mock).toHaveBeenCalledTimes(1);
-      const loadingMessage = screen.getByText(/Loading/);
+      const loadingMessage = screen.getByText(/Loading/i);
       expect(loadingMessage).toBeInTheDocument();
     });
   });
@@ -44,7 +44,7 @@ describe('<TodosList />', () => {
         data: [],
       });
 
-      render(<TodosList />);
+      render(<TodosLists />);
     });
 
     test('user can see a message if there is an error fetching todos', () => {
@@ -62,12 +62,12 @@ describe('<TodosList />', () => {
         data: [],
       });
 
-      render(<TodosList />);
+      render(<TodosLists />);
     });
 
     test('user can see a message if the list of todos is empty', () => {
       expect(useGetTodos as jest.Mock).toHaveBeenCalledTimes(1);
-      const emptyMessage = screen.getByText('No todos yet');
+      const emptyMessage = screen.getByText(/enjoy your free time/i);
       expect(emptyMessage).toBeInTheDocument();
     });
   });
@@ -80,14 +80,19 @@ describe('<TodosList />', () => {
         data: mockTodos,
       });
 
-      render(<TodosList />);
+      render(<TodosLists />);
     });
 
-    test('user can see a list of todos', () => {
+    test('user can see one list of completed and one of uncompleted todos', () => {
       expect(useGetTodos as jest.Mock).toHaveBeenCalledTimes(1);
 
-      const title = screen.getByRole('heading', { level: 1, name: 'Todos' });
-      expect(title).toBeInTheDocument();
+      const uncompletedTitle = screen.getByRole('heading', { name: /todos/i });
+      const completedTitle = screen.getByRole('heading', {
+        name: /completed/i,
+      });
+      expect(uncompletedTitle).toBeInTheDocument();
+      expect(completedTitle).toBeInTheDocument();
+
       const todos = screen.getAllByRole('listitem');
       expect(todos).toHaveLength(3);
     });

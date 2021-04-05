@@ -1,44 +1,19 @@
 {
   "todos": [
     {
-      "title": "Attend the meeting",
-      "done": false,
-      "id": 8
-    },
-    {
-      "title": "Clean floor",
+      "title": "update checkbox styling",
       "done": true,
-      "id": 10
+      "id": 18
     },
     {
-      "title": "this is a new todo",
-      "done": true,
-      "id": 11
-    },
-    {
-      "title": "run 5k",
+      "title": "Add button icons",
       "done": false,
-      "id": 12
+      "id": 19
     },
     {
-      "title": "que temazo",
+      "title": "update todo edit styles",
       "done": false,
-      "id": 13
-    },
-    {
-      "title": "ouh mama",
-      "done": false,
-      "id": 14
-    },
-    {
-      "title": "esto si que es un pedazo de libreria para gestionar el estado de tu aplicacion",
-      "done": false,
-      "id": 15
-    },
-    {
-      "title": "madre del amor hermoso que parece que si metes un monton de texto en el titulo de una tarea el item se vuelve un poco loco renderizando el checkbox",
-      "done": false,
-      "id": 16
+      "id": 20
     }
   ]
 }

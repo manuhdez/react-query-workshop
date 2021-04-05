@@ -25,13 +25,14 @@ export default function TodoForm() {
   return (
     <Form onSubmit={handleFormSubmit}>
       <TextInput hasError={isError}>
-        <label htmlFor="todo-input">Add todo:</label>
+        <label htmlFor="todo-input">Add todo</label>
         <input
           type="text"
           value={todoTitle}
           id="todo-input"
           onChange={handleInputChange}
           placeholder="Cleaning the desk..."
+          maxLength={50}
         />
       </TextInput>
       <Button type="submit" theme="primary" disabled={isLoading || !todoTitle}>
