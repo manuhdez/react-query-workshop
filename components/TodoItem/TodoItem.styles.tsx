@@ -34,8 +34,8 @@ export const Item = styled.li<ItemProps>`
   input[type='text'] {
     display: flex;
     align-items: center;
-    font-size: 1.1rem;
-    line-height: 1.1rem;
+    font-size: 1rem;
+    line-height: 1rem;
     letter-spacing: 1;
     height: 1.3rem;
     padding: 0;

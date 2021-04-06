@@ -9,6 +9,7 @@ export default createGlobalStyle`
     --beige: #F1E3D3;
     --dark: #1B221B;
     --grey: #E8EDE8;
+    --darker-grey: #c3c4c3;
     --shadow-light: 0 5px 20px 0px rgba(0, 0, 0, 0.2);
     --corner-radius: 5px;
     --rounded: 50%;

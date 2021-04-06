@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 
 export default styled.input.attrs({ type: 'checkbox' })`
-  --size: 1.25rem;
+  --size: 1rem;
 
-  /* appearance: none; */
   width: var(--size);
   height: var(--size);
   border: 2px solid var(--purple);
